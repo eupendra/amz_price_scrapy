@@ -22,7 +22,7 @@ def send_mail(body, subject):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
     msg['From'] = config.USER_NAME
-    msg['To'] =  config.USER_NAME
+    msg['To'] = config.USER_NAME
     text = "Scraped today's prices"
     part1 = MIMEText(text, 'plain')
     part2 = MIMEText(body, 'html')
@@ -53,7 +53,12 @@ def get_csv_contents():
             # output.append(', '.join(row))
             for cell in row:
                 output += '<td>'
-                output += cell
+                if 'True' in str(cell):
+                    output += '<b>YES</b>'
+                elif 'False' in str(cell):
+                    output += '<i>No<i>'
+                else:
+                    output += cell
                 output += '</td>'
             output += '</tr>\n'
             if i == 10:
@@ -64,4 +69,4 @@ def get_csv_contents():
 if __name__ == '__main__':
     run_crawler()
     body = get_csv_contents()
-    send_mail(body, f"Today's prices from PI - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    send_mail(body, f"Today's prices from Pi - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

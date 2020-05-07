@@ -37,8 +37,10 @@ class AmazonSpider(scrapy.Spider):
         else:
             item['deal'] = False
             item['deal_price'] = -1
-
-        item['regular_price'] = float(
-            response.css("span#priceblock_ourprice::text").re_first(r"[\d,.]+").replace(',', '') or -1
-        )
+        if response.css("span#priceblock_ourprice"):
+            item['regular_price'] = float(
+                response.css("span#priceblock_ourprice::text").re_first(r"[\d,.]+").replace(',', '') or -1
+            )
+        else:
+            item['regular_price'] = -1
         yield item
