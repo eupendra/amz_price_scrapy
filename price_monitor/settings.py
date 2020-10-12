@@ -7,7 +7,7 @@ NEWSPIDER_MODULE = 'price_monitor.spiders'
 ROBOTSTXT_OBEY = True
 
 ITEM_PIPELINES = {
-    'price_monitor.pipelines.CSVStoragePipeline': 300,
+    'price_monitor.pipelines.DBStoragePipeline': 300,
 }
 
 AUTOTHROTTLE_ENABLED = True

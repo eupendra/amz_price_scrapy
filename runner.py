@@ -3,11 +3,12 @@
 import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+import pandas as pd
+import matplotlib.pyplot as plt
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-
 import config
+from db_helper import get_df_from_db
 
 
 def run_crawler():
@@ -50,7 +51,6 @@ def get_csv_contents():
     with open('amazon.csv', 'r') as f:
         for i, row in enumerate(reversed(list(csv.reader(f)))):
             output += '<tr>'
-            # output.append(', '.join(row))
             for cell in row:
                 output += '<td>'
                 if 'True' in str(cell):
@@ -66,7 +66,23 @@ def get_csv_contents():
     return output + '</table>'
 
 
+def get_mail_body(dataframe):
+    df = dataframe.apply(lambda x: x.str.strip() if x.dtype == "object" else x)  # strip whitespace
+    asins = set(df['asin'].tolist())
+    dfs = []
+    for asin in asins:
+        dfs.append(df[df['asin'] == asin][['asin', 'regular_price', 'ts']])
+    for d in dfs:
+        plt.plot(d['regular_price'], x='ts')
+        plt.show()
+
+
 if __name__ == '__main__':
+    print('Running Spider')
     run_crawler()
-    body = get_csv_contents()
-    send_mail(body, f"Today's prices from Pi - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print('Reading historical Data')
+    df = get_df_from_db()
+    # body = get_mail_body(df)
+    print('Sending mail')
+    send_mail(df.to_html(classes='table table-striped'), f"Today's prices from Pi - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print('Done')

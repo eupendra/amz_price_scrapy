@@ -9,10 +9,10 @@ import scrapy
 
 
 class PriceMonitorItem(scrapy.Item):
+    asin = scrapy.Field()
     product_name = scrapy.Field()
     title = scrapy.Field()
     deal = scrapy.Field()
-    deal_price = scrapy.Field()
-    regular_price = scrapy.Field()
-    when = scrapy.Field()
+    price = scrapy.Field()
     url = scrapy.Field()
+    ts = scrapy.Field()
